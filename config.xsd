@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Configuration">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Network">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="UDP_IP_REC" type="xs:string"/>
+              <xs:element name="UDP_IP_META" type="xs:string"/>
+              <xs:element name="MAVLinkConnection" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Ports">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="PortSendMeta" type="xs:positiveInteger"/>
+              <xs:element name="PortRecMeta" type="xs:positiveInteger"/>
+              <xs:element name="PortRecTouch" type="xs:positiveInteger"/>
+              <xs:element name="PortRecJoystick" type="xs:positiveInteger"/>
+              <xs:element name="PortRecTemperature" type="xs:positiveInteger"/>
+              <xs:element name="TxPortVideoApp" type="xs:positiveInteger"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Joystick">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Mode">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="usb"/>
+                    <xs:enumeration value="udp"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Gimbal">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Gain" type="xs:decimal"/>
+              <xs:element name="PitchNeutral" type="xs:positiveInteger"/>
+              <xs:element name="YawNeutral" type="xs:positiveInteger"/>
+              <xs:element name="PWMPitchMin" type="xs:positiveInteger"/>
+              <xs:element name="PWMPitchMax" type="xs:positiveInteger"/>
+              <xs:element name="PWMYawMin" type="xs:positiveInteger"/>
+              <xs:element name="PWMYawMax" type="xs:positiveInteger"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="RCChannels">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ChannelPitch" type="xs:positiveInteger"/>
+              <xs:element name="ChannelYaw" type="xs:positiveInteger"/>
+              <xs:element name="ChannelCam" type="xs:positiveInteger"/>
+              <xs:element name="ChannelDeploy1" type="xs:positiveInteger"/>
+              <xs:element name="ChannelDeploy2" type="xs:positiveInteger"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Drone">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ID" type="xs:positiveInteger"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Token" type="xs:string"/>
+        <xs:element name="JoystickAdjustment">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ExponentialFactor" type="xs:decimal"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

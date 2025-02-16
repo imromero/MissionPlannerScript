@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<Configuration>
+  <Network>
+    <UDP_IP_REC>127.0.0.1</UDP_IP_REC>
+    <UDP_IP_META>127.0.0.1</UDP_IP_META>
+    <MAVLinkConnection>udp:localhost:14550</MAVLinkConnection>
+  </Network>
+  <Ports>
+    <PortSendMeta>5005</PortSendMeta>
+    <PortRecMeta>5006</PortRecMeta>
+    <PortRecTouch>13003</PortRecTouch>
+    <PortRecJoystick>12226</PortRecJoystick>
+    <PortRecTemperature>12227</PortRecTemperature>
+    <TxPortVideoApp>15432</TxPortVideoApp>
+  </Ports>
+  <Joystick>
+    <Mode>usb</Mode>
+  </Joystick>
+  <Gimbal>
+    <Gain>25.1</Gain>
+    <PitchNeutral>1825</PitchNeutral>
+    <YawNeutral>1675</YawNeutral>
+    <PWMPitchMin>1010</PWMPitchMin>
+    <PWMPitchMax>2018</PWMPitchMax>
+    <PWMYawMin>1010</PWMYawMin>
+    <PWMYawMax>2018</PWMYawMax>
+  </Gimbal>
+  <RCChannels>
+    <ChannelPitch>13</ChannelPitch>
+    <ChannelYaw>14</ChannelYaw>
+    <ChannelCam>12</ChannelCam>
+    <ChannelDeploy1>6</ChannelDeploy1>
+    <ChannelDeploy2>7</ChannelDeploy2>
+  </RCChannels>
+  <Drone>
+    <ID>13</ID>
+  </Drone>
+  <Token>my_secret_token kk 222</Token>
+  <JoystickAdjustment>
+    <ExponentialFactor>1.5</ExponentialFactor>
+  </JoystickAdjustment>
+</Configuration>
