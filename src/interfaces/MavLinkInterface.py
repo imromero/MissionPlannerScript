@@ -99,6 +99,7 @@ class MavlinkInterface:
     def PymavlinkRead(self):
         logging.info("Initiating MAVLinkRead loop...")
         logging.info("Waiting for heartbeat...")
+        aa=self.master_.recv_msg()
         self.master_.wait_heartbeat()
         logging.info("Heartbeat received. Starting MAVLink read loop.")
         self.ConfigureMount()

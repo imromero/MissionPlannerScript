@@ -3,7 +3,7 @@
   <Network>
     <UDP_IP_REC>127.0.0.1</UDP_IP_REC>
     <UDP_IP_META>127.0.0.1</UDP_IP_META>
-    <MAVLinkConnection>udp:localhost:14550</MAVLinkConnection>
+    <MAVLinkConnection>udp:localhost:14551</MAVLinkConnection>
   </Network>
   <Ports>
     <PortSendMeta>5005</PortSendMeta>
