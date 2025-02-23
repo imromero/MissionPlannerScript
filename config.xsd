@@ -8,7 +8,7 @@
             <xs:sequence>
               <xs:element name="UDP_IP_REC" type="xs:string"/>
               <xs:element name="UDP_IP_META" type="xs:string"/>
-              <xs:element name="MAVLinkConnection" type="xs:string"/>
+              <xs:element name="UDP_IP_MAVLINK" type="xs:string"/>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -17,6 +17,8 @@
             <xs:sequence>
               <xs:element name="PortSendMeta" type="xs:positiveInteger"/>
               <xs:element name="PortRecMeta" type="xs:positiveInteger"/>
+                <xs:element name="PortRecMavlink" type="xs:positiveInteger"/>
+              <xs:element name="PortSendMavlink" type="xs:positiveInteger"/>
               <xs:element name="PortRecTouch" type="xs:positiveInteger"/>
               <xs:element name="PortRecJoystick" type="xs:positiveInteger"/>
               <xs:element name="PortRecTemperature" type="xs:positiveInteger"/>
@@ -74,6 +76,7 @@
           <xs:complexType>
             <xs:sequence>
               <xs:element name="ExponentialFactor" type="xs:decimal"/>
+               <xs:element name="DeadZone" type="xs:decimal"/>
             </xs:sequence>
           </xs:complexType>
         </xs:element>

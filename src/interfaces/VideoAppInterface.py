@@ -1,16 +1,12 @@
-"""
-Module: VideoAppInterface.py
-Description: Sends telemetry and other state data from the Mission Planner to a video application via UDP.
-"""
 
 import struct
 from interfaces.UDPChannel import UDPChannel
+import time
+import logging
 
 class VideoAppInterface:
-    """
-    Manages sending data to the video application.
-    """
     def __init__(self, udpIpRec, txPortVideoApp):
+        self.logger = logging.getLogger("Video Interface")
         self.txChannel_ = UDPChannel(udpIpRec, txPortVideoApp, isReceiver=False)
         self.udpIpRec_ = udpIpRec
         self.txPortVideoApp_ = txPortVideoApp
@@ -24,3 +20,4 @@ class VideoAppInterface:
                                        state.telemetry_.accelZ_,
                                        state.joystick_.temperature_)
             self.txChannel_.Send(videoappData, self.udpIpRec_, self.txPortVideoApp_)
+            time.sleep(0.05)

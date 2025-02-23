@@ -3,57 +3,50 @@ import logging
 import time
 
 class USBJoystickInterface:
-    """
-    Handles USB joystick input using pygame. If no joystick is connected, 
-    the system logs a warning and sets joystick values to zero continuously.
-    
-    Attributes:
-        state (DroneState): The shared state of the drone.
-        exponential_factor (float): Factor for exponential adjustment.
-        joystick: The pygame joystick object (or None if not available).
-    """
-    def __init__(self, state, exponential_factor):
-        pygame.init()
-        pygame.joystick.init()
+    def __init__(self, state, exponential_factor,dead_zone):
+        self.logger = logging.getLogger("USB Joystick Interface")
         self.state = state
         self.exponential_factor = exponential_factor
-        
-        if pygame.joystick.get_count() == 0:
-            logging.warning("No USB joystick found. The system will continue without joystick input.")
-            self.joystick = None
-        else:
-            self.joystick = pygame.joystick.Joystick(0)
-            self.joystick.init()
-            logging.info(f"USB Joystick connected: {self.joystick.get_name()}")
+        self.deadzone = 0.05
 
     def Run(self):
-        """
-        Processes joystick input. If no joystick is connected, sets joystick values to zero.
-        """
-        if self.joystick is None:
-            # If no joystick is available, keep updating the state with zeros.
-            while True:
-                self.state.joystick_.joystickX_ = 0.0
-                self.state.joystick_.joystickY_ = 0.0
-                self.state.joystick_.joystickZ_ = 0.0
-                self.state.joystick_.joystickButton_ = 0
-                time.sleep(0.05)
-        else:
-            while True:
-                pygame.event.pump()
-                try:
-                    rawX = self.joystick.get_axis(0)
-                    rawY = self.joystick.get_axis(1)
-                    rawZ = self.joystick.get_axis(2) if self.joystick.get_numaxes() > 2 else 0.0
-                    # Here you might want to apply the exponential factor:
-                    self.state.joystick_.joystickX_ = rawX ** self.exponential_factor
-                    self.state.joystick_.joystickY_ = rawY ** self.exponential_factor
-                    self.state.joystick_.joystickZ_ = rawZ ** self.exponential_factor
-                    # Assume the first button is used for some action:
-                    if self.joystick.get_numbuttons() > 0:
-                        self.state.joystick_.joystickButton_ = self.joystick.get_button(0)
-                    else:
-                        self.state.joystick_.joystickButton_ = 0
-                except Exception as e:
-                    logging.error("Error reading USB joystick: %s", e)
-                time.sleep(0.05)
+        pygame.init()
+        pygame.joystick.init()
+
+        if pygame.joystick.get_count() == 0:
+            self.logger.error("No joysticks connected.")
+            return
+
+        joystick = pygame.joystick.Joystick(0)
+        joystick.init()
+
+        num_axes = joystick.get_numaxes()
+        num_buttons = joystick.get_numbuttons()
+
+        prev_axes = [joystick.get_axis(i) for i in range(num_axes)]
+        prev_buttons = [joystick.get_button(i) for i in range(num_buttons)]
+        while True:
+            try:
+
+                pygame.event.pump()  # Procesa eventos
+                axes =  [self.apply_exponential_curve(joystick.get_axis(i)) for i in range(num_axes)]
+                buttons = [joystick.get_button(i) for i in range(num_buttons)]
+                axes_changed = any(abs(axes[i] - prev_axes[i]) > 0.01 for i in range(num_axes))
+                buttons_changed = any(buttons[i] != prev_buttons[i] for i in range(num_buttons))
+
+                if axes_changed or buttons_changed:
+                    prev_axes = axes
+                    prev_buttons = buttons
+                    self.logger.debug(f"Ejes: {[round(a, 4) for a in axes]}, Botones: {buttons}")
+                    #TODO: Report the axes change to mavlink to send to the drone
+
+            except Exception as e:
+                self.logger.error("Error reading USB joystick: %s", e)
+            time.sleep(0.05)
+
+
+    def apply_exponential_curve(self, value):
+        if abs(value) < self.deadzone:
+            return 0.0  # Elimina ruido en la zona muerta
+        sign = 1 if value > 0 else -1
+        return sign * (abs(value) ** self.exponential_factor)  # Aplica la curva exponencial manteniendo el signo

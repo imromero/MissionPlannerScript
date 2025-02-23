@@ -1,27 +1,16 @@
-"""
-Module: GCSInterface.py
-Description: Manages communication with the Ground Control Station (GCS) via UDP.
-"""
-
 import time
 import struct
 import logging
 from interfaces.UDPChannel import UDPChannel
 
 class GCSInterface:
-    """
-    Handles GCS communications via UDP.
-    
-    Attributes:
-        metaChannel_ (UDPChannel): Channel for meta data.
-        touchChannel_ (UDPChannel): Channel for touch data.
-    """
     def __init__(self, udpIpRec, portRecMeta, portRecTouch):
+        self.logger = logging.getLogger("GSC Interface")
         self.metaChannel_ = UDPChannel(udpIpRec, portRecMeta, isReceiver=True)
         self.touchChannel_ = UDPChannel(udpIpRec, portRecTouch, isReceiver=True)
     
     def TouchAppReceiver(self, state):
-        logging.info("GCS interface started.")
+        self.logger.info("GCS interface started.")
         while True:
             try:
                 data, address = self.touchChannel_.Receive(1024)
@@ -32,9 +21,9 @@ class GCSInterface:
                 state.control_.smartDeploy_ = unpacked[4]
                 state.control_.gcsCommand1_ = unpacked[5]
                 state.control_.gcsCommand2_ = unpacked[6]
-                logging.debug(f"GCS active control: {state.control_.activeControl_}")
+                self.logger.debug(f"GCS active control: {state.control_.activeControl_}")
             except Exception as e:
-                logging.error(f"GCS receiver error: {e}")
+                self.logger.error(f"GCS receiver error: {e}")
     
     def GCSControlHandler(self, state, mavlinkInterface):
         while True:

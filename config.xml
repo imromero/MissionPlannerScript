@@ -3,7 +3,7 @@
   <Network>
     <UDP_IP_REC>127.0.0.1</UDP_IP_REC>
     <UDP_IP_META>127.0.0.1</UDP_IP_META>
-    <MAVLinkConnection>udp:localhost:14551</MAVLinkConnection>
+    <UDP_IP_MAVLINK>127.0.0.1</UDP_IP_MAVLINK>
   </Network>
   <Ports>
     <PortSendMeta>5005</PortSendMeta>
@@ -12,6 +12,8 @@
     <PortRecJoystick>12226</PortRecJoystick>
     <PortRecTemperature>12227</PortRecTemperature>
     <TxPortVideoApp>15432</TxPortVideoApp>
+    <PortRecMavlink>14551</PortRecMavlink>
+    <PortSendMavlink>14551</PortSendMavlink>
   </Ports>
   <Joystick>
     <Mode>usb</Mode>
@@ -38,5 +40,6 @@
   <Token>my_secret_token kk 222</Token>
   <JoystickAdjustment>
     <ExponentialFactor>1.5</ExponentialFactor>
+    <DeadZone>0.05</DeadZone>
   </JoystickAdjustment>
 </Configuration>

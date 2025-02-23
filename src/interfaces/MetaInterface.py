@@ -1,8 +1,3 @@
-"""
-Module: MetaInterface.py
-Description: Handles UDP communication with a Meta device.
-"""
-
 import struct
 import logging
 from interfaces.UDPChannel import UDPChannel
@@ -12,18 +7,19 @@ class MetaInterface:
     Manages communication with a Meta device via UDP.
     """
     def __init__(self, udpIpMeta, udpIpRec, portSendMeta, portRecMeta):
+        self.logger = logging.getLogger("Meta Interface")
         self.senderChannel_ = UDPChannel(udpIpRec, portSendMeta, isReceiver=False)
         self.receiverChannel_ = UDPChannel(udpIpRec, portRecMeta, isReceiver=True)
         self.udpIpMeta_ = udpIpMeta
         self.portSendMeta_ = portSendMeta
 
     def ReceiveFromMeta(self):
-        logging.info("Meta interface started.")
+        self.logger.info("Meta interface started.")
         while True:
             try:
                 data, address = self.receiverChannel_.Receive(1024)
             except Exception as e:
-                logging.error(f"Meta receive error: {e}")
+                self.logger.error(f"Meta receive error: {e}")
     
     def GCSToMeta(self, state):
         while True:

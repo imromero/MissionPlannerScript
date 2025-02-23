@@ -1,10 +1,3 @@
-"""
-Module: ConfigLoader.py
-Description: Loads configuration parameters from an XML file and can write them back.
-The attribute names correspond directly to the XML tag names but are stored as camelCase
-with a trailing underscore.
-"""
-
 import xml.etree.ElementTree as ET
 import logging
 import sys
@@ -25,7 +18,8 @@ class ConfigLoader:
             network = root.find("Network")
             self.udpIpRec_ = get_text(network.find("UDP_IP_REC"))
             self.udpIpMeta_ = get_text(network.find("UDP_IP_META"))
-            self.mavlinkConnection_ = get_text(network.find("MAVLinkConnection"))
+            self.udpIpMavlink_ = get_text(network.find("UDP_IP_MAVLINK"))
+
             
             # Ports configuration
             ports = root.find("Ports")
@@ -35,6 +29,8 @@ class ConfigLoader:
             self.portRecJoystick_ = int(get_text(ports.find("PortRecJoystick")))
             self.portRecTemperature_ = int(get_text(ports.find("PortRecTemperature")))
             self.txPortVideoApp_ = int(get_text(ports.find("TxPortVideoApp")))
+            self.portRecMavlink_ = int(get_text(ports.find("PortRecMavlink")))
+            self.portSendMavlink_ = int(get_text(ports.find("PortSendMavlink")))
             
             # Joystick configuration
             joystick = root.find("Joystick")
@@ -68,74 +64,11 @@ class ConfigLoader:
             # JoystickAdjustment
             ja = root.find("JoystickAdjustment")
             self.exponentialFactor_ = float(get_text(ja.find("ExponentialFactor")))
-            
+            self.deadZone = float(get_text(ja.find("DeadZone")))
+
         except Exception as e:
             print("Error loading XML configuration:", e)
             sys.exit(1)
         
         logging.info("Configuration loaded successfully.")
 
-    def write_config(self):
-        """
-        Writes the current configuration attributes to the XML file using the same structure,
-        and formats (pretty-prints) the XML before saving.
-        """
-        import xml.dom.minidom  # Aseguramos la importación del módulo
-
-        root = ET.Element("Configuration")
-        
-        # Network configuration
-        network = ET.SubElement(root, "Network")
-        ET.SubElement(network, "UDP_IP_REC").text = self.udpIpRec_
-        ET.SubElement(network, "UDP_IP_META").text = self.udpIpMeta_
-        ET.SubElement(network, "MAVLinkConnection").text = self.mavlinkConnection_
-        
-        # Ports configuration
-        ports = ET.SubElement(root, "Ports")
-        ET.SubElement(ports, "PortSendMeta").text = str(self.portSendMeta_)
-        ET.SubElement(ports, "PortRecMeta").text = str(self.portRecMeta_)
-        ET.SubElement(ports, "PortRecTouch").text = str(self.portRecTouch_)
-        ET.SubElement(ports, "PortRecJoystick").text = str(self.portRecJoystick_)
-        ET.SubElement(ports, "PortRecTemperature").text = str(self.portRecTemperature_)
-        ET.SubElement(ports, "TxPortVideoApp").text = str(self.txPortVideoApp_)
-        
-        # Joystick configuration
-        joystick = ET.SubElement(root, "Joystick")
-        ET.SubElement(joystick, "Mode").text = self.joysticMode_
-        
-        # Gimbal configuration
-        gimbal = ET.SubElement(root, "Gimbal")
-        ET.SubElement(gimbal, "Gain").text = str(self.gain_)
-        ET.SubElement(gimbal, "PitchNeutral").text = str(self.pitchNeutral_)
-        ET.SubElement(gimbal, "YawNeutral").text = str(self.yawNeutral_)
-        ET.SubElement(gimbal, "PWMPitchMin").text = str(self.pwmPitchMin_)
-        ET.SubElement(gimbal, "PWMPitchMax").text = str(self.pwmPitchMax_)
-        ET.SubElement(gimbal, "PWMYawMin").text = str(self.pwmYawMin_)
-        ET.SubElement(gimbal, "PWMYawMax").text = str(self.pwmYawMax_)
-        
-        # RCChannels configuration
-        rc = ET.SubElement(root, "RCChannels")
-        ET.SubElement(rc, "ChannelPitch").text = str(self.channelPitch_)
-        ET.SubElement(rc, "ChannelYaw").text = str(self.channelYaw_)
-        ET.SubElement(rc, "ChannelCam").text = str(self.channelCam_)
-        ET.SubElement(rc, "ChannelDeploy1").text = str(self.channelDeploy1_)
-        ET.SubElement(rc, "ChannelDeploy2").text = str(self.channelDeploy2_)
-        
-        # Drone configuration
-        drone = ET.SubElement(root, "Drone")
-        ET.SubElement(drone, "ID").text = str(self.id_)
-        
-        # Token
-        ET.SubElement(root, "Token").text = self.token_
-        
-        # JoystickAdjustment
-        ja = ET.SubElement(root, "JoystickAdjustment")
-        ET.SubElement(ja, "ExponentialFactor").text = str(self.exponentialFactor_)
-        
-        # Convert to a pretty XML string.
-        rough_string = ET.tostring(root, 'utf-8')
-        reparsed = xml.dom.minidom.parseString(rough_string)
-        pretty_xml = reparsed.toprettyxml(indent="  ")
-        
-        with open(self.filePath, "w", encoding="utf-8") as f:
-            f.write(pretty_xml)
