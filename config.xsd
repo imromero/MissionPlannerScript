@@ -26,20 +26,6 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Joystick">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="Mode">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:enumeration value="usb"/>
-                    <xs:enumeration value="udp"/>
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
         <xs:element name="Gimbal">
           <xs:complexType>
             <xs:sequence>

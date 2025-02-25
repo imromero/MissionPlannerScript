@@ -61,7 +61,7 @@ class MissionPlannerIntegrator:
                                             self.config_.portSendMeta_,
                                             self.config_.portRecMeta_)
 
-        self.usbJoystickInterface_ = USBJoystickInterface(self.state_, self.config_.exponentialFactor_,self.config_.deadZone)
+        self.usbJoystickInterface_ = USBJoystickInterface(self.state_, self.config_.exponentialFactor_,self.config_.deadZone,self.mavLinkWriterInterface)
 
 
     def InstallDependencies(self):
@@ -123,24 +123,14 @@ class MissionPlannerIntegrator:
         t_temp.start()
         threads.append(t_temp)
 
-        # Launch joystick interface thread based on configuration
-        if self.config_.joysticMode_ == "udp":
-            t_joy = threading.Thread(
-                target=self.raspiInterface_.ReceiveJoystick,
-                args=(self.state_,),
-                name="ReceiveJoystickThread",
-                daemon=False
-            )
-            t_joy.start()
-            threads.append(t_joy)
-        elif self.config_.joysticMode_ == "usb":
-            t_usbjoy = threading.Thread(
-                target=self.usbJoystickInterface_.Run,
-                name="USBJoystickThread",
-                daemon=False
-            )
-            t_usbjoy.start()
-            threads.append(t_usbjoy)
+
+        t_usbjoy = threading.Thread(
+            target=self.usbJoystickInterface_.Run,
+            name="USBJoystickThread",
+            daemon=False
+        )
+        t_usbjoy.start()
+        threads.append(t_usbjoy)
 
         self.logger.info("All threads have been launched.")
         # Wait for all threads to finish

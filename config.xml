@@ -15,9 +15,6 @@
     <PortRecMavlink>14551</PortRecMavlink>
     <PortSendMavlink>14551</PortSendMavlink>
   </Ports>
-  <Joystick>
-    <Mode>usb</Mode>
-  </Joystick>
   <Gimbal>
     <Gain>25.1</Gain>
     <PitchNeutral>1825</PitchNeutral>

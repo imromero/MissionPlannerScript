@@ -32,9 +32,7 @@ class ConfigLoader:
             self.portRecMavlink_ = int(get_text(ports.find("PortRecMavlink")))
             self.portSendMavlink_ = int(get_text(ports.find("PortSendMavlink")))
             
-            # Joystick configuration
-            joystick = root.find("Joystick")
-            self.joysticMode_ = get_text(joystick.find("Mode")).lower()
+
             
             # Gimbal configuration
             gimbal = root.find("Gimbal")

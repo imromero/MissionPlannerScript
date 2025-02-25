@@ -3,8 +3,9 @@ import logging
 import time
 
 class USBJoystickInterface:
-    def __init__(self, state, exponential_factor,dead_zone):
+    def __init__(self, state, exponential_factor,dead_zone,mavlinWriter):
         self.logger = logging.getLogger("USB Joystick Interface")
+        self.mavlinkWriter = mavlinWriter
         self.state = state
         self.exponential_factor = exponential_factor
         self.deadzone = 0.05
@@ -38,7 +39,7 @@ class USBJoystickInterface:
                     prev_axes = axes
                     prev_buttons = buttons
                     self.logger.debug(f"Ejes: {[round(a, 4) for a in axes]}, Botones: {buttons}")
-                    #TODO: Report the axes change to mavlink to send to the drone
+                    self.mavlinkWriter.set_gimbal_speed(axes[0], axes[1])
 
             except Exception as e:
                 self.logger.error("Error reading USB joystick: %s", e)
