@@ -12,28 +12,32 @@ class MavlinkWriterInterface:
         self.logger = logging.getLogger("MavLink Writer Interface")
         self.logger.info("Initializing MAVLink connection...")
         self.master_ = mavutil.mavlink_connection(connection_string_)
+        self.current_pitch_ = 0.0  # Current pitch angle in degrees.
+        self.current_yaw_ = 0.0  # Current yaw angle in degrees.
+        self.max_rate_pitch_ = 10.0
+        self.max_rate_yaw_ = 10.0
 
-    def set_gimbal_speed(self, joystick_azimuth, joystick_elevation):
+    def set_gimbal_speed(self, joystick_azimuth, joystick_elevation,dt):
         with self.lockSend:
-            flags=0
-            gimbal_device_id=0
-            yaw_rate = max(-1.0, min(1.0, joystick_azimuth))
-            pitch_rate = max(-1.0, min(1.0, joystick_elevation))
 
-            # Set the pitch and yaw angles to NaN so that only the angular rates are used.
-            pitch_angle = float('nan')
-            yaw_angle = float('nan')
+            delta_pitch = joystick_elevation * self.max_rate_pitch_ * dt
+            delta_yaw = joystick_azimuth * self.max_rate_yaw_ * dt
+            mount_mode = 2
 
-            # Send the MAVLink message using the gimbal_manager_set_manual_control_send method.
-            self.master_.mav.gimbal_manager_set_manual_control_send(
-                self.master_.target_system,  # Target system ID
-                self.master_.target_component,  # Target component ID
-                flags,  # High-level flags
-                gimbal_device_id,  # Gimbal device ID
-                pitch_angle,  # Pitch angle (NaN to ignore)
-                yaw_angle,  # Yaw angle (NaN to ignore)
-                pitch_rate,  # Pitch angular rate (unitless, -1 to 1)
-                yaw_rate  # Yaw angular rate (unitless, -1 to 1)
+            self.current_pitch_ += delta_pitch
+            self.current_yaw_ += delta_yaw
+
+
+            self.master_.mav.command_long_send(
+                self.master_.target_system,  # target_system
+                self.master_.target_component,  # target_component
+                mavutil.mavlink.MAV_CMD_DO_MOUNT_CONTROL,  # command
+                0,  # confirmation
+                self.current_pitch_,  # param1: pitch angle in degrees
+                0,  # param2: roll angle (set to 0)
+                self.current_yaw_,  # param3: yaw angle in degrees
+                0, 0, 0,  # param4, param5, param6 (unused)
+                mount_mode  # param7: mount mode (typically 2)
             )
 
     def SendRCChannelPWM(self, deploy1, deploy2, camera, pitch, yaw):

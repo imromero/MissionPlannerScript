@@ -2,15 +2,19 @@ import pygame
 import logging
 import time
 
+
+
+
 class USBJoystickInterface:
     def __init__(self, state, exponential_factor,dead_zone,mavlinWriter):
         self.logger = logging.getLogger("USB Joystick Interface")
         self.mavlinkWriter = mavlinWriter
         self.state = state
         self.exponential_factor = exponential_factor
-        self.deadzone = 0.05
+        self.deadzone = dead_zone
 
     def Run(self):
+        delta_time = 0.05
         pygame.init()
         pygame.joystick.init()
 
@@ -24,26 +28,17 @@ class USBJoystickInterface:
         num_axes = joystick.get_numaxes()
         num_buttons = joystick.get_numbuttons()
 
-        prev_axes = [joystick.get_axis(i) for i in range(num_axes)]
-        prev_buttons = [joystick.get_button(i) for i in range(num_buttons)]
+
         while True:
             try:
-
                 pygame.event.pump()  # Procesa eventos
                 axes =  [self.apply_exponential_curve(joystick.get_axis(i)) for i in range(num_axes)]
                 buttons = [joystick.get_button(i) for i in range(num_buttons)]
-                axes_changed = any(abs(axes[i] - prev_axes[i]) > 0.01 for i in range(num_axes))
-                buttons_changed = any(buttons[i] != prev_buttons[i] for i in range(num_buttons))
-
-                if axes_changed or buttons_changed:
-                    prev_axes = axes
-                    prev_buttons = buttons
-                    self.logger.debug(f"Ejes: {[round(a, 4) for a in axes]}, Botones: {buttons}")
-                    self.mavlinkWriter.set_gimbal_speed(axes[0], axes[1])
-
+                #self.logger.debug(f"Ejes: {[round(a, 4) for a in axes]}, Botones: {buttons}")
+                self.mavlinkWriter.set_gimbal_speed(axes[0], axes[1],delta_time)
             except Exception as e:
                 self.logger.error("Error reading USB joystick: %s", e)
-            time.sleep(0.05)
+            time.sleep(delta_time)
 
 
     def apply_exponential_curve(self, value):
